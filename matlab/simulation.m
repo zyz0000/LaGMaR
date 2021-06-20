@@ -3,17 +3,35 @@ function [RMR_LOGISTIC, RMR_POISSON, RMR_LINEAR, ...
           KRUSKAL_LOGISTIC, KRUSKAL_POISSON, KRUSKAL_LINEAR] = simulation(Tc, p, q)
       
 if (p == 20 && q == 20)
-    lambda_logistic = 10; 
-    lambda_poisson = 10; 
-    lambda_linear = 2.5;
+    lambda_logistic_rmr = 10; 
+    lambda_poisson_rmr = 10; 
+    lambda_linear_rmr = 2.5;
+    lambda_logistic_tucker = 0.5;
+    lambda_poisson_tucker = 5;
+    lambda_linear_tucker = 5;
+    lambda_logistic_kruskal = 5;
+    lambda_poisson_kruskal = 0.5;
+    lambda_linear_kruskal = 5;
 elseif (p == 20 && q == 50)
-    lambda_logistic = 20; 
-    lambda_poisson = 20; 
-    lambda_linear = 5;
+    lambda_logistic_rmr = 20; 
+    lambda_poisson_rmr = 20; 
+    lambda_linear_rmr = 5;
+    lambda_logistic_tucker = 1;
+    lambda_poisson_tucker = 1;
+    lambda_linear_tucker = 0.5;
+    lambda_logistic_kruskal = 5;
+    lambda_poisson_kruskal = 1;
+    lambda_linear_kruskal = 5;
 else
-    lambda_logistic = 20; 
-    lambda_poisson = 20; 
-    lambda_linear = 5;
+    lambda_logistic_rmr = 20; 
+    lambda_poisson_rmr = 20; 
+    lambda_linear_rmr = 5;
+    lambda_logistic_tucker = 1;
+    lambda_poisson_tucker = 1;
+    lambda_linear_tucker = 0.5;
+    lambda_logistic_kruskal = 5;
+    lambda_poisson_kruskal = 1;
+    lambda_linear_kruskal = 5;
 end
 [X, y_linear, y_logistic, y_poisson] = data_generator(Tc, p, q);
 Z = randn(size(X, 3), 3);
@@ -44,7 +62,8 @@ for fold = 1:5
 
     %% perform matrix sparse regression
     %perform logistic setting
-    [beta_logistic, B_logistic, ~] = matrix_sparsereg(Z_train, tensor(X_train), y_train_logistic, lambda_logistic, 'binomial');
+    [beta_logistic, B_logistic, ~] = matrix_sparsereg(Z_train, tensor(X_train), ...
+                               y_train_logistic, lambda_logistic_rmr, 'binomial');
     coef_rmr = double(B_logistic);
     coef_rmr = coef_rmr(:)';
     log_odds_rmr = cellfun(@(x) double(coef_rmr) * x(:), Q, 'UniformOutput', false);
@@ -53,14 +72,16 @@ for fold = 1:5
     y_pred_rmr_logistic = prob_rmr >= 0.5;
     
     %perform poisson setting
-    [beta_poisson, B_poisson, ~] = matrix_sparsereg(Z_train, tensor(X_train), y_train_poisson, lambda_poisson, 'poisson');
+    [beta_poisson, B_poisson, ~] = matrix_sparsereg(Z_train, tensor(X_train), ...
+                                y_train_poisson, lambda_poisson_rmr, 'poisson');
     coef_rmr = double(B_poisson);
     coef_rmr =coef_rmr(:)';
     log_y_pred_rmr = cellfun(@(x) double(coef_rmr) * x(:), Q, 'UniformOutput', false);
     y_pred_rmr_poisson = exp(cell2mat(log_y_pred_rmr') + Z_test * beta_poisson);
     
     %perform linear setting
-    [beta_linear, B_linear, ~] = matrix_sparsereg(Z_train, tensor(X_train), y_train_linear, lambda_linear, 'normal');
+    [beta_linear, B_linear, ~] = matrix_sparsereg(Z_train, tensor(X_train), ...
+                                y_train_linear, lambda_linear_rmr, 'normal');
     coef_rmr = double(B_linear);
     coef_rmr =coef_rmr(:)';
     y_pred_rmr_linear = cellfun(@(x) double(coef_rmr) * x(:), Q, 'UniformOutput', false);
@@ -77,7 +98,9 @@ for fold = 1:5
     
     %% perform tucker11 regression
     %perform logistic setting
-    [bb_rk11, beta_rk11_logistic, ~] = tucker_reg(Z_train, tensor(X_train), y_train_logistic, [1, 1], 'binomial');
+    [~, B0, ~] = tucker_reg(Z_train, tensor(X_train), y_train_logistic, [1, 1], 'binomial');
+    [bb_rk11, beta_rk11_logistic, ~] = tucker_sparsereg(Z_train, tensor(X_train), ...
+            y_train_logistic, [1, 1], 'binomial', lambda_logistic_tucker, 'enet', 1, 'B0', B0);
     coef_tucker11 = double(beta_rk11_logistic);
     coef_tucker11 = coef_tucker11(:)';
     log_odds_tucker11 = cellfun(@(x) double(coef_tucker11) * x(:), Q, 'UniformOutput', false);
@@ -86,14 +109,18 @@ for fold = 1:5
     y_pred_tucker11_logistic = prob_tucker11 >= 0.5;
     
     %perform poisson setting
-    [bp_rk11, beta_rk11_poisson, ~] = tucker_reg(Z_train, tensor(X_train), y_train_poisson, [1, 1], 'poisson');
+    [~, B0, ~] = tucker_reg(Z_train, tensor(X_train), y_train_poisson, [1, 1], 'poisson');
+    [bp_rk11, beta_rk11_poisson, ~] = tucker_sparsereg(Z_train, tensor(X_train), ...
+            y_train_poisson, [1, 1], 'poisson', lambda_poisson_tucker, 'enet', 1, 'B0', B0);
     coef_tucker11 = double(beta_rk11_poisson);
     coef_tucker11 = coef_tucker11(:)';
     log_y_pred_tucker11 = cellfun(@(x) double(coef_tucker11) * x(:), Q, 'UniformOutput', false);
     y_pred_tucker11_poisson = exp(cell2mat(log_y_pred_tucker11') + Z_test * bp_rk11);
     
     %perform linear setting
-    [bl_rk11, beta_rk11_linear, ~] = tucker_reg(Z_train, tensor(X_train), y_train_linear, [1, 1], 'normal');
+    [~, B0, ~] = tucker_reg(Z_train, tensor(X_train), y_train_poisson, [1, 1], 'normal');
+    [bl_rk11, beta_rk11_linear, ~] = tucker_sparsereg(Z_train, tensor(X_train), ...
+            y_train_linear, [1, 1], 'normal', lambda_linear_tucker, 'mcp', 1, 'B0', B0);
     coef_tucker11 = double(beta_rk11_linear);
     coef_tucker11 = coef_tucker11(:)';
     y_pred_tucker11 = cellfun(@(x) double(coef_tucker11) * x(:), Q, 'UniformOutput', false);
@@ -109,7 +136,9 @@ for fold = 1:5
 
     %% perform kruskal1
     %perform logtisic setting
-    [bb_rk1, beta_rk1_logistic, ~, ~] = kruskal_reg(Z_train, tensor(X_train), y_train_logistic, 1, 'binomial');
+    [~, B0, ~, ~] = kruskal_reg(Z_train, tensor(X_train), y_train_logistic, 1, 'binomial');
+    [bb_rk1, beta_rk1_logistic, ~, ~] = kruskal_sparsereg(Z_train, tensor(X_train), ...
+                y_train_logistic, 1, 'binomial', lambda_logistic_kruskal, 'enet', 1, 'B0', B0);
     coef_kruskal1 = double(beta_rk1_logistic);
     coef_kruskal1 = coef_kruskal1(:)';
     log_odds_kruskal1 = cellfun(@(x) double(coef_kruskal1) * x(:), Q, 'UniformOutput', false);
@@ -118,14 +147,18 @@ for fold = 1:5
     y_pred_kruskal1_logistic = prob_kruskal1 >= 0.5;
     
     %perform poisson setting
-    [bp_rk1, beta_rk1_poisson, ~] = kruskal_reg(Z_train, tensor(X_train), y_train_poisson, 1, 'poisson');
+    [~, B0, ~] = kruskal_reg(Z_train, tensor(X_train), y_train_poisson, 1, 'poisson');
+    [bp_rk1, beta_rk1_poisson, ~, ~] = kruskal_sparsereg(Z_train, tensor(X_train), ...
+                y_train_poisson, 1, 'poisson', lambda_poisson_kruskal, 'power', 1, 'B0', B0);
     coef_kruskal1 = double(beta_rk1_poisson);
     coef_kruskal1 = coef_kruskal1(:)';
     log_y_pred_kruskal1 = cellfun(@(x) double(coef_kruskal1) * x(:), Q, 'UniformOutput', false);
     y_pred_kruskal1_poisson = exp(cell2mat(log_y_pred_kruskal1') + Z_test * bp_rk1);
     
     %perform linear setting
-    [bl_rk1, beta_rk1_linear, ~] = kruskal_reg(Z_train, tensor(X_train), y_train_linear, 1, 'normal');
+    [~, B0, ~] = kruskal_reg(Z_train, tensor(X_train), y_train_linear, 1, 'normal');
+    [bl_rk1, beta_rk1_linear, ~, ~] = kruskal_sparsereg(Z_train, tensor(X_train), ...
+                y_train_linear, 1, 'normal', lambda_linear_kruskal, 'enet', 1, 'B0', B0);
     coef_kruskal1 = double(beta_rk1_linear);
     coef_kruskal1 = coef_kruskal1(:)';
     y_pred_kruskal1 = cellfun(@(x) double(coef_kruskal1) * x(:), Q, 'UniformOutput', false);

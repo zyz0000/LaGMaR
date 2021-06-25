@@ -1,7 +1,49 @@
 function [RMR_LOGISTIC, RMR_POISSON, RMR_LINEAR, ... 
           TUCKER_LOGISTIC, TUCKER_POISSON, TUCKER_LINEAR, ...
           KRUSKAL_LOGISTIC, KRUSKAL_POISSON, KRUSKAL_LINEAR] = simulation(Tc, p, q)
-      
+
+% The table below shows the tuning parameters we select for RMR, Tucker and CP
+%(p_1, p_2) = (20, 20): 
+%         Logistic:
+%                   RMR: \lambda = 10
+%                   Tucker: \lambda = 0.5, penalty type = 'enet'
+%                   Kruskal: \lambda = 5, penalty type = 'enet'
+%         Normal:
+%                   RMR: \lambda = 2.5
+%                   Tucker: \lambda = 5, penalty type = 'mcp'
+%                   Kruskal: \lambda = 5, penalty type = 'enet'
+%         Poisson:
+%                   RMR: \lambda = 10
+%                   Tucker: \lambda = 5, penalty type = 'enet'
+%                   Kruskal: \lambda = 0.5, penalty type = 'power'
+%(p_1, p_2) = (20, 50): 
+%         Logistic:
+%                   RMR: \lambda = 20
+%                   Tucker: \lambda = 0.5, penalty type = 'enet'
+%                   Kruskal: \lambda = 5, penalty type = 'enet'
+%         Normal:
+%                   RMR: \lambda = 5
+%                   Tucker: \lambda = 0.5, penalty type = 'mcp'
+%                   Kruskal: \lambda = 5, penalty type = 'enet'
+%         Poisson:
+%                   RMR: \lambda = 20
+%                   Tucker: \lambda = 1, penalty type = 'enet'
+%                   Kruskal: \lambda = 1, penalty type = 'power'
+%(p_1, p_2) = (50, 50): 
+%         Logistic:
+%                   RMR: \lambda = 20
+%                   Tucker: \lambda = 1, penalty type = 'enet'
+%                   Kruskal: \lambda = 5, penalty type = 'enet'
+%         Normal:
+%                   RMR: \lambda = 5
+%                   Tucker: \lambda = 0.5, penalty type = 'mcp'
+%                   Kruskal: \lambda = 5, penalty type = 'enet'
+%         Poisson:
+%                   RMR: \lambda = 20
+%                   Tucker: \lambda = 1, penalty type = 'enet'
+%                   Kruskal: \lambda = 1, penalty type = 'power'
+
+
 if (p == 20 && q == 20)
     lambda_logistic_rmr = 10; 
     lambda_poisson_rmr = 10; 

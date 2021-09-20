@@ -22,28 +22,37 @@ M_20_20_1_O <- M_20_20_2_O <- M_20_20_3_O <- M_20_20_4_O <-
   M_20_50_1_O <- M_20_50_2_O <- M_20_50_3_O <- M_20_50_4_O <- 
   M_50_50_1_O <- M_50_50_2_O <- M_50_50_3_O <- M_50_50_4_O <- matrix(0, REPS, 2)
 
+k <- r <- 3
+p1 <- q1 <- p2 <- 20
+q2 <- p3 <- q3 <- 50
+R1 <- matrix(runif(p1 * k, -sqrt(p1), sqrt(p1)), nrow = p1, ncol = k)
+C1 <- matrix(runif(q1 * r, -sqrt(q1), sqrt(q1)), nrow = q1, ncol = r)
+R2 <- matrix(runif(p2 * k, -sqrt(p2), sqrt(p2)), nrow = p2, ncol = k)
+C2 <- matrix(runif(q2 * r, -sqrt(q2), sqrt(q2)), nrow = q2, ncol = r)
+R3 <- matrix(runif(p3 * k, -sqrt(p3), sqrt(p3)), nrow = p3, ncol = k)
+C3 <- matrix(runif(q3 * r, -sqrt(q3), sqrt(q3)), nrow = q3, ncol = r)
 
 for (rep in 1:REPS){
-  if ( rep %% 5 == 0 ){
+  if ( rep %% 10 == 0 ){
     cat("This is the", rep, "th repetition...\n")
   }
   
   tryCatch(
     {
-      M1 <- simulation(0.5, 20, 20)
-      M2 <- simulation(1, 20, 20)
-      M3 <- simulation(1.5, 20, 20)
-      M4 <- simulation(2, 20, 20)
+      M1 <- simulation(R1, C1, 0.5, 20, 20)
+      M2 <- simulation(R1, C1, 1, 20, 20)
+      M3 <- simulation(R1, C1, 1.5, 20, 20)
+      M4 <- simulation(R1, C1, 2, 20, 20)
       
-      M5 <- simulation(0.5, 20, 50)
-      M6 <- simulation(1, 20, 50)
-      M7 <- simulation(1.5, 20, 50)
-      M8 <- simulation(2, 20, 50)
+      M5 <- simulation(R2, C2, 0.5, 20, 50)
+      M6 <- simulation(R2, C2, 1, 20, 50)
+      M7 <- simulation(R2, C2, 1.5, 20, 50)
+      M8 <- simulation(R2, C2, 2, 20, 50)
       
-      M9 <- simulation(0.5, 50, 50)
-      M10 <- simulation(1, 50, 50)
-      M11 <- simulation(1.5, 50, 50)
-      M12 <- simulation(2, 50, 50)
+      M9 <- simulation(R3, C3, 0.5, 50, 50)
+      M10 <- simulation(R3, C3, 1, 50, 50)
+      M11 <- simulation(R3, C3, 1.5, 50, 50)
+      M12 <- simulation(R3, C3, 2, 50, 50)
     }, error=function (e) {""}
   )
 
@@ -97,7 +106,7 @@ for (rep in 1:REPS){
 all.vars <- data.frame(ls())
 VARS <- as.character(all.vars[grep(pattern="M_", all.vars[,1]),])
 for (item in 1:36){
-  filename <- paste("/home/zhangyz/mvglm/result/", VARS[item], ".csv", sep="")
+  filename <- paste("/home/zhangyz/mvglm/simu_919/", VARS[item], ".csv", sep="")
   write.csv(get(VARS[item]), file=filename, row.names = FALSE)
 }
                                    

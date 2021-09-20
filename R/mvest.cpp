@@ -3,6 +3,7 @@
 #include<RcppArmadillo.h>
 
 // [[Rcpp::depends(RcppArmadillo)]]
+using std::string;
 using Rcpp::Named;
 using namespace arma;
 

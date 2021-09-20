@@ -1,16 +1,13 @@
-data.generator <- function(Tc, p, q){
+data.generator <- function(R, C, Tc, p, q){
   k <- r <- 3
   Ts <- Tc * p * q
   
-  R <- matrix(runif(p * k, -sqrt(p), sqrt(p)), nrow = p, ncol = k)
-  C <- matrix(runif(q * r, -sqrt(q), sqrt(q)), nrow = q, ncol = r)
   X <- array(0, dim = c(p, q, Ts))
   y.linear <- y.logistic <- y.poisson <- rep(0, Ts)
   Zcov <- matrix(0, nrow=k*r, ncol=k*r)
   for (i in 1:(k*r)){
     Zcov[i, ] <- 0.5^abs((i - 1:(k*r)))
   }
-  
   gamma <- 1
   alpha <- 2*c(1, -1, rep(0.5, floor((k*r - 2)/2)), rep(-0.5, k*r - 2 - floor((k*r - 2)/2)))
 

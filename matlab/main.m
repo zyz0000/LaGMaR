@@ -40,6 +40,18 @@ REPS = 100;
 [KRUSKAL_20_50_1_O, KRUSKAL_20_50_2_O, KRUSKAL_20_50_3_O, KRUSKAL_20_50_4_O] = deal(zeros(REPS, 2));
 [KRUSKAL_50_50_1_O, KRUSKAL_50_50_2_O, KRUSKAL_50_50_3_O, KRUSKAL_50_50_4_O] = deal(zeros(REPS, 2));
 
+%% fix the parameters R and C
+k = 3; r = 3;
+p1 = 20; q1 = 20;
+p2 = 20; q2 = 50;
+p3 = 50; q3 = 50;
+R1 = random("unif", -sqrt(p1), sqrt(p1), p1, k);
+C1 = random("unif", -sqrt(q1), sqrt(q1), q1, r);
+R2 = random("unif", -sqrt(p2), sqrt(p2), p2, k);
+C2 = random("unif", -sqrt(q2), sqrt(q2), q2, r);
+R3 = random("unif", -sqrt(p3), sqrt(p3), p3, k);
+C3 = random("unif", -sqrt(q3), sqrt(q3), q3, r);
+
 %ABCD命名规则
 %A代表模型: r代表regularized matrix, t代表tucker, k代表kruskal
 %B代表(p1,p2)的组合，1代表(20,20),2代表(20,50),3代表(50,50)
@@ -54,20 +66,20 @@ parfor rep = 1:REPS
         disp(["This is the" num2str(rep) "th iteration..."]); 
     end
     
-    [r11L, r11P, r11O, t11L, t11P, t11O, k11L, k11P, k11O] = simulation(0.5, 20, 20);
-    [r12L, r12P, r12O, t12L, t12P, t12O, k12L, k12P, k12O] = simulation(1, 20, 20);
-    [r13L, r13P, r13O, t13L, t13P, t13O, k13L, k13P, k13O] = simulation(1.5, 20, 20);
-    [r14L, r14P, r14O, t14L, t14P, t14O, k14L, k14P, k14O] = simulation(2, 20, 20);
+    [r11L, r11P, r11O, t11L, t11P, t11O, k11L, k11P, k11O] = simulation(R1, C1, 0.5, 20, 20);
+    [r12L, r12P, r12O, t12L, t12P, t12O, k12L, k12P, k12O] = simulation(R1, C1, 1, 20, 20);
+    [r13L, r13P, r13O, t13L, t13P, t13O, k13L, k13P, k13O] = simulation(R1, C1, 1.5, 20, 20);
+    [r14L, r14P, r14O, t14L, t14P, t14O, k14L, k14P, k14O] = simulation(R1, C1, 2, 20, 20);
     
-    [r21L, r21P, r21O, t21L, t21P, t21O, k21L, k21P, k21O] = simulation(0.5, 20, 50);
-    [r22L, r22P, r22O, t22L, t22P, t22O, k22L, k22P, k22O] = simulation(1, 20, 50);
-    [r23L, r23P, r23O, t23L, t23P, t23O, k23L, k23P, k23O] = simulation(1.5, 20, 50);
-    [r24L, r24P, r24O, t24L, t24P, t24O, k24L, k24P, k24O] = simulation(2, 20, 50);
+    [r21L, r21P, r21O, t21L, t21P, t21O, k21L, k21P, k21O] = simulation(R2, C2, 0.5, 20, 50);
+    [r22L, r22P, r22O, t22L, t22P, t22O, k22L, k22P, k22O] = simulation(R2, C2, 1, 20, 50);
+    [r23L, r23P, r23O, t23L, t23P, t23O, k23L, k23P, k23O] = simulation(R2, C2, 1.5, 20, 50);
+    [r24L, r24P, r24O, t24L, t24P, t24O, k24L, k24P, k24O] = simulation(R2, C2, 2, 20, 50);
     
-    [r31L, r31P, r31O, t31L, t31P, t31O, k31L, k31P, k31O] = simulation(0.5, 50, 50);
-    [r32L, r32P, r32O, t32L, t32P, t32O, k32L, k32P, k32O] = simulation(1, 50, 50);
-    [r33L, r33P, r33O, t33L, t33P, t33O, k33L, k33P, k33O] = simulation(1.5, 50, 50);
-    [r34L, r34P, r34O, t34L, t34P, t34O, k34L, k34P, k34O] = simulation(2, 50, 50);
+    [r31L, r31P, r31O, t31L, t31P, t31O, k31L, k31P, k31O] = simulation(R3, C3, 0.5, 50, 50);
+    [r32L, r32P, r32O, t32L, t32P, t32O, k32L, k32P, k32O] = simulation(R3, C3, 1, 50, 50);
+    [r33L, r33P, r33O, t33L, t33P, t33O, k33L, k33P, k33O] = simulation(R3, C3, 1.5, 50, 50);
+    [r34L, r34P, r34O, t34L, t34P, t34O, k34L, k34P, k34O] = simulation(R3, C3, 2, 50, 50);
     
     %% Regularized matrix regression value assignment
     RMR_20_20_1_L(rep, :) = r11L;

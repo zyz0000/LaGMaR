@@ -1,8 +1,7 @@
-function [X, y_linear, y_logistic, y_poisson] = data_generator(Tc, p, q)
+function [X, y_linear, y_logistic, y_poisson] = data_generator(R, C, Tc, p, q)
 k = 3; r = 3;
 Ts = Tc * p * q;
-R = random("unif", -sqrt(p), sqrt(p), p, k);
-C = random("unif", -sqrt(q), sqrt(q), q, r);
+
 X = zeros(p, q, Ts);
 [y_linear, y_logistic, y_poisson] = deal(zeros(Ts, 1));
 Zcov = zeros(k*r, k*r);

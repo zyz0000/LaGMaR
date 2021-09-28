@@ -7,15 +7,10 @@ simulation <- function(R, C, Tc, p, q){
   
   data <- data.generator(R, C, Tc, p, q)
   X <- data$X
+  V <- data$v
   y.linear <- data$y.linear
   y.logistic <- data$y.logistic
   y.poisson <- data$y.poisson
-  V <- matrix(
-    mvtnorm::rmvnorm(Tc * p * q, 
-                     mean = rep(0, 3), 
-                     sigma = diag(3)), 
-    nrow = Tc * p * q, ncol = 3
-  )
   
   trainIndex <- createDataPartition(y.logistic, times = 5, p = 0.8, list = FALSE)
   metric.logistic <- matrix(0, nrow=5, ncol=5)

@@ -33,8 +33,7 @@ else
     lambda_poisson_kruskal = 1;
     lambda_linear_kruskal = 5;
 end
-[X, y_linear, y_logistic, y_poisson] = data_generator(R, C, Tc, p, q);
-Z = randn(size(X, 3), 3);
+[X, Z, y_linear, y_logistic, y_poisson] = data_generator(R, C, Tc, p, q);
 
 % use logistic setting to split dataset, because there is no difference for
 % poisson and linear settings
@@ -62,6 +61,7 @@ for fold = 1:5
 
     %% perform matrix sparse regression
     %perform logistic setting
+    X_train = tensor(X_train);
     [beta_logistic, B_logistic, ~] = matrix_sparsereg(Z_train, tensor(X_train), ...
                                y_train_logistic, lambda_logistic_rmr, 'binomial');
     coef_rmr = double(B_logistic);

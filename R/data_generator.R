@@ -33,5 +33,5 @@ data.generator <- function(R, C, Tc, p, q){
     y.poisson[i] <- rpois(1, lambda=max(mu, 1))
   }
   
-  return (list(X=X, y.linear=y.linear, y.logistic=y.logistic, y.poisson=y.poisson))
+  return (list(X=X, v=v, y.linear=y.linear, y.logistic=y.logistic, y.poisson=y.poisson))
 }

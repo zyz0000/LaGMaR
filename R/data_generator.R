@@ -3,6 +3,12 @@ data.generator <- function(R, C, Tc, p, q){
   Ts <- Tc * p * q
   
   X <- array(0, dim = c(p, q, Ts))
+  v <- matrix(
+    mvtnorm::rmvnorm(Ts, 
+                     mean=rep(0, 3), 
+                     sigma = diag(3)), 
+    nrow=Ts, ncol=3
+    )
   y.linear <- y.logistic <- y.poisson <- rep(0, Ts)
   Zcov <- matrix(0, nrow=k*r, ncol=k*r)
   for (i in 1:(k*r)){
@@ -10,6 +16,7 @@ data.generator <- function(R, C, Tc, p, q){
   }
   gamma <- 1
   alpha <- 2*c(1, -1, rep(0.5, floor((k*r - 2)/2)), rep(-0.5, k*r - 2 - floor((k*r - 2)/2)))
+  beta <- c(1, 1, 1)
 
   for (i in 1:Ts){
     Z <- matrix(
@@ -20,9 +27,10 @@ data.generator <- function(R, C, Tc, p, q){
     )
     e <- matrix(rnorm(p * q), p, q)
     X[, , i] <- R %*% Z %*% t(C) + e
-    y.linear[i] <- rnorm(1, mean=gamma + t(alpha) %*% matrix(Z, ncol = 1), sd=1)
-    y.logistic[i] <- rbinom(1, 1, 1 / (1 + exp(-(gamma + t(alpha) %*% matrix(Z, ncol = 1)))))
-    y.poisson[i] <- rpois(1, lambda=max(gamma + t(alpha) %*% matrix(Z, ncol=1), 1))
+    mu <- gamma + t(alpha) %*% matrix(Z, ncol = 1) + v[i, ] %*% beta
+    y.linear[i] <- rnorm(1, mean=mu, sd=1)
+    y.logistic[i] <- rbinom(1, 1, 1 / (1 + exp(-mu)))
+    y.poisson[i] <- rpois(1, lambda=max(mu, 1))
   }
   
   return (list(X=X, y.linear=y.linear, y.logistic=y.logistic, y.poisson=y.poisson))

@@ -1,6 +1,6 @@
 rng(2021);
 warning('off');
-REPS = 100;
+REPS = 50;
 %% regularized matrix regression
 [RMR_20_20_1_L, RMR_20_20_2_L, RMR_20_20_3_L, RMR_20_20_4_L] = deal(zeros(REPS, 5));
 [RMR_20_50_1_L, RMR_20_50_2_L, RMR_20_50_3_L, RMR_20_50_4_L] = deal(zeros(REPS, 5));

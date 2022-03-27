@@ -38,3 +38,4 @@ You should download and unzip them into the `toolbox` folder of your matlab inst
 addpath(path) %<-- Add the toolbox to the Matlab path
 save path %<-- Save for future Matlab sessions
 ```
+I have already upload all matlab toolboxes in dependencies.zip for your convenience.

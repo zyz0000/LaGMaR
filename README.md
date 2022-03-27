@@ -32,7 +32,7 @@ The matlab code is directly translated from R files.
 | simulation.m | train and validate model using five-fold cross validation|
 | main.m | the main interface to perform simulation                |
 
-To install the dependencies, including [Tensor Toolbox](https://old-www.sandia.gov/~tgkolda/TensorToolbox/index-2.6.html), [TensorReg](https://hua-zhou.github.io/TensorReg/) and [SparseReg](https://github.com/Hua-Zhou/SparseReg/).
+To install the dependencies, including [Tensor Toolbox](https://github.com/andrewssobral/tensor_toolbox), [TensorReg](https://hua-zhou.github.io/TensorReg/) and [SparseReg](https://github.com/Hua-Zhou/SparseReg/).
 You should download and unzip them into the `toolbox` folder of your matlab installation location. Then add both path into the matlab search path by the following code:
 ```R
 addpath(path) %<-- Add the toolbox to the Matlab path

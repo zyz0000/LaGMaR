@@ -1,4 +1,4 @@
-### Code Document for **Factor Analysis for Matrix Variate GeneralizedLinear Models with Application to COVID-19 Image Data**
+### Code for **Low-rank Latent Matrix-factor Prediction Modeling for Generalized High-dimensional Matrix-variate Regression**
 
 ### Code Files
 

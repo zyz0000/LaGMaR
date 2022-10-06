@@ -1,6 +1,6 @@
 setwd("/home/zhangyz/mvglm")
 library(stringr)
-source("/home/zhangyz/mvglm/simulation.R")
+source("./simulation.R")
 set.seed(2022)
 REPS <- 100
 
@@ -106,7 +106,7 @@ for (rep in 1:REPS){
 all.vars <- data.frame(ls())
 VARS <- as.character(all.vars[grep(pattern="M_", all.vars[,1]),])
 for (item in 1:36){
-  filename <- paste("/home/zhangyz/mvglm/simu_919/", VARS[item], ".csv", sep="")
+  filename <- paste("./result/", VARS[item], ".csv", sep="")
   write.csv(get(VARS[item]), file=filename, row.names = FALSE)
 }
                                    

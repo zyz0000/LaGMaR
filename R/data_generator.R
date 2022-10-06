@@ -1,7 +1,7 @@
 data.generator <- function(R, C, Tc, p, q){
-  k <- r <- 3
+  k <- 3
+  r <- 3
   Ts <- Tc * p * q
-  
   X <- array(0, dim = c(p, q, Ts))
   v <- matrix(
     mvtnorm::rmvnorm(Ts, 
